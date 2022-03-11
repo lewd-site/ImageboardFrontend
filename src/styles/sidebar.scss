@@ -1,0 +1,19 @@
+.sidebar {
+  font-size: 18px;
+  font-weight: bold;
+
+  &__item {
+    margin-bottom: 16px;
+  }
+
+  &__link {
+    display: inline-block;
+    border-radius: 50px;
+    text-decoration: none;
+    padding: 8px 16px;
+
+    &_active {
+      background: #303339;
+    }
+  }
+}

@@ -3,7 +3,7 @@
     display: flex;
     flex-flow: row wrap;
     align-items: baseline;
-    padding: 16px;
+    padding: 8px 16px;
   }
 
   &__subject {
@@ -54,11 +54,11 @@
     }
   }
   &__content {
-    padding: 0 16px 16px;
+    padding: 0 16px 8px;
   }
 
   &__footer {
-    padding: 0 16px 16px;
+    padding: 0 16px 8px;
     font-size: 0.8em;
   }
 }

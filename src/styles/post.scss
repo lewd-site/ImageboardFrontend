@@ -3,7 +3,7 @@
     display: flex;
     flex-flow: row wrap;
     align-items: baseline;
-    padding: 16px;
+    padding: 8px 16px;
   }
 
   &__author {
@@ -35,6 +35,6 @@
   }
 
   &__content {
-    padding: 0 16px 16px;
+    padding: 0 16px 8px;
   }
 }
