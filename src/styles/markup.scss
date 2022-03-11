@@ -1,0 +1,26 @@
+.underline {
+  text-decoration: underline;
+}
+
+.spoiler {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  color: transparent;
+  transition: color 100ms ease;
+
+  &:hover {
+    color: #eee;
+  }
+}
+
+.quote {
+  color: #e3833d;
+}
+
+.reflink {
+  color: #e3833d;
+
+  &::before {
+    content: '>>';
+  }
+}

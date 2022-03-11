@@ -3,4 +3,12 @@
     text-align: center;
     margin-bottom: 16px;
   }
+
+  &__thread {
+    background: #43474f;
+    border-radius: 5px;
+    margin-bottom: 16px;
+    width: max-content;
+    max-width: 100%;
+  }
 }

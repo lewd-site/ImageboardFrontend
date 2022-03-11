@@ -1,2 +1,2 @@
-/dist/* -diff
+/dist/assets/* -diff
 yarn.lock -diff
