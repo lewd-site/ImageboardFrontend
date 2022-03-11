@@ -1,0 +1,63 @@
+.thread {
+  &__header {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: baseline;
+    padding: 16px;
+  }
+
+  &__subject {
+    font-size: 20px;
+
+    &:not(:empty) {
+      margin-right: 16px;
+    }
+  }
+
+  &__author {
+    font-size: 18px;
+    margin-right: 16px;
+  }
+
+  &__name {
+    font-weight: bold;
+  }
+
+  &__tripcode {
+    &:not(:empty)::before {
+      content: '!';
+    }
+  }
+
+  &__date {
+    color: #a9a9a9;
+    margin-right: 16px;
+  }
+
+  &__id {
+    color: #e3833d;
+    margin-right: 16px;
+
+    &::before {
+      content: '№';
+    }
+  }
+
+  &__reply {
+    &::before {
+      content: '[';
+    }
+
+    &::after {
+      content: ']';
+    }
+  }
+  &__content {
+    padding: 0 16px 16px;
+  }
+
+  &__footer {
+    padding: 0 16px 16px;
+    font-size: 0.8em;
+  }
+}

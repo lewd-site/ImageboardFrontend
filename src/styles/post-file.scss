@@ -1,0 +1,19 @@
+.post-file {
+  &__info {
+    font-size: 0.8em;
+  }
+
+  &__link {
+    display: block;
+  }
+
+  &__image {
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  &_audio &__image,
+  &_video &__image {
+    border: 2px dashed #eee;
+  }
+}

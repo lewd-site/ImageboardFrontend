@@ -1,0 +1,40 @@
+.post {
+  &__header {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: baseline;
+    padding: 16px;
+  }
+
+  &__author {
+    font-size: 18px;
+    margin-right: 16px;
+  }
+
+  &__name {
+    font-weight: bold;
+  }
+
+  &__tripcode {
+    &:not(:empty)::before {
+      content: '!';
+    }
+  }
+
+  &__date {
+    color: #a9a9a9;
+    margin-right: 16px;
+  }
+
+  &__id {
+    color: #e3833d;
+
+    &::before {
+      content: '№';
+    }
+  }
+
+  &__content {
+    padding: 0 16px 16px;
+  }
+}

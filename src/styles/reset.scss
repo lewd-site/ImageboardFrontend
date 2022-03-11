@@ -1,0 +1,61 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+}
+
+picture,
+img {
+  display: block;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table,
+thead,
+tbody,
+tr,
+th,
+td {
+  border: 1px solid;
+}
+
+th {
+  font-weight: normal;
+}
+
+thead th {
+  font-weight: bold;
+}
+
+td {
+  text-align: center;
+}

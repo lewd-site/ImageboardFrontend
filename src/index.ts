@@ -1,3 +1,2 @@
-import './index.css';
-
-console.log('Hello  world!');
+import '../node_modules/normalize.css/normalize.css';
+import './styles/index.scss';

@@ -1,0 +1,10 @@
+.post-files {
+  display: flex;
+  flex-flow: row wrap;
+  margin-right: -16px;
+
+  &__item {
+    margin-right: 16px;
+    margin-bottom: 16px;
+  }
+}
