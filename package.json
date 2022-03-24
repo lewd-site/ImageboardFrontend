@@ -6,6 +6,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "@lewd-site/components": "git+ssh://git@github.com:lewd-site/Components.git",
     "dotenv": "^16.0.0",
     "normalize.css": "^8.0.1"
   },
