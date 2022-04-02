@@ -13,6 +13,7 @@ import { delay } from './utils';
 import '@lewd-site/components';
 import '../node_modules/normalize.css/normalize.css';
 import './styles/index.scss';
+import ApiClient from './api/client';
 
 declare global {
   interface Window {
@@ -48,11 +49,14 @@ dayjs.extend(localizedFormat);
 dayjs.extend(utc);
 dayjs.locale('ru');
 
-document.addEventListener('DOMContentLoaded', () => {
-  const thread: Thread | null =
-    typeof window.ssr?.thread !== 'undefined' ? convertThreadDtoToModel(window.ssr.thread) : null;
+const apiClient = new ApiClient();
 
-  const posts: Post[] = (window.ssr?.posts || []).map(convertPostDtoToModel);
+let thread: Thread | null = null;
+let posts: Post[] = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  thread = typeof window.ssr?.thread !== 'undefined' ? convertThreadDtoToModel(window.ssr.thread) : null;
+  posts = (window.ssr?.posts || []).map(convertPostDtoToModel);
 
   const postListElement = document.getElementById('post-list');
   if (postListElement !== null) {
@@ -101,8 +105,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let eventSource: EventSource;
 
-  function initSSE() {
+  async function initSSE() {
     eventSource = new EventSource(config.sse.host);
+    eventSource.addEventListener('open', async () => {
+      if (thread !== null) {
+        posts = await apiClient.browsePosts(thread.slug, thread.id);
+        if (postListElement !== null) {
+          render(
+            html`${posts.map((post) => postTemplate({ className: 'thread-page__post', post: post }))}`,
+            postListElement
+          );
+        }
+      }
+    });
+
     eventSource.addEventListener('post_created', onPostCreated);
     eventSource.addEventListener('error', () => eventSource.close());
   }

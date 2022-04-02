@@ -11,6 +11,18 @@ interface PostProps {
 
 const DEFAULT_NAME = 'Anonymous';
 
+function formatName(post: Post): string {
+  if (post.name !== null && post.name.length) {
+    return post.name;
+  }
+
+  if (post.tripcode !== null && post.tripcode.length) {
+    return '';
+  }
+
+  return DEFAULT_NAME;
+}
+
 export function post({ className, post }: PostProps) {
   className = [
     className,
@@ -25,7 +37,7 @@ export function post({ className, post }: PostProps) {
   return html`<section class=${className} id=${`post_${post.id}`}>
     <div class="post__header">
       <span class="post__author">
-        <span class="post__name">${post.name || DEFAULT_NAME}</span>
+        <span class="post__name">${formatName(post)}</span>
         <span class="post__tripcode">${post.tripcode || ''}</span>
       </span>
 
