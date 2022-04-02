@@ -57,6 +57,26 @@ export class ApiClient {
     return convertThreadDtoToModel(data.item);
   }
 
+  public async addThread(slug: string, subject: string, name: string, message: string, files: File[]): Promise<Thread> {
+    const url = `${config.api.host}/${ApiClient.BASE_URL}/boards/${slug}/threads`;
+    const body = new FormData();
+    body.append('subject', subject);
+    body.append('name', name);
+    body.append('message', message);
+    for (const file of files) {
+      body.append('files', file, file.name);
+    }
+
+    const response = await fetch(url, { method: 'post', body });
+    if (response.status !== 201) {
+      throw new ApiError(response.status, response.statusText);
+    }
+
+    const data = (await response.json()) as ItemResponse<ThreadDto>;
+
+    return convertThreadDtoToModel(data.item);
+  }
+
   public async browsePosts(slug: string, threadId: number): Promise<Post[]> {
     const url = `${config.api.host}/${ApiClient.BASE_URL}/boards/${slug}/threads/${threadId}/posts`;
     const response = await fetch(url);
@@ -67,6 +87,25 @@ export class ApiClient {
     const data = (await response.json()) as ListResponse<PostDto>;
 
     return data.items.map(convertPostDtoToModel);
+  }
+
+  public async addPost(slug: string, threadId: number, name: string, message: string, files: File[]): Promise<Post> {
+    const url = `${config.api.host}/${ApiClient.BASE_URL}/boards/${slug}/threads/${threadId}/posts`;
+    const body = new FormData();
+    body.append('name', name);
+    body.append('message', message);
+    for (const file of files) {
+      body.append('files', file, file.name);
+    }
+
+    const response = await fetch(url, { method: 'post', body });
+    if (response.status !== 201) {
+      throw new ApiError(response.status, response.statusText);
+    }
+
+    const data = (await response.json()) as ItemResponse<PostDto>;
+
+    return convertPostDtoToModel(data.item);
   }
 }
 
