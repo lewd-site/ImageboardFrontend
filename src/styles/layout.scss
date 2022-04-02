@@ -3,7 +3,9 @@
   color: #eeeeee;
 
   &__title {
+    font-size: 24px;
     text-align: center;
+
     margin-bottom: 16px;
   }
 
@@ -18,8 +20,27 @@
   }
 
   &__content {
+    display: flex;
+    flex-flow: column nowrap;
+
     max-width: 800px;
+    min-height: 100vh;
+
     margin: 0 auto;
     padding: 16px;
+  }
+
+  &__index-page,
+  &__board-page,
+  &__thread-page {
+    display: flex;
+    flex-flow: column nowrap;
+
+    flex: 1;
+  }
+
+  &__gallery {
+    position: relative;
+    z-index: 100;
   }
 }

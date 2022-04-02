@@ -1,4 +1,8 @@
 import { html, render } from 'lit-html';
+import dayjs from 'dayjs';
+import localizedFormat from 'dayjs/plugin/localizedFormat';
+import utc from 'dayjs/plugin/utc';
+import 'dayjs/locale/ru';
 import config from './config';
 import Post, { PostDto } from './models/post';
 import { BoardDto } from './models/board';
@@ -39,6 +43,10 @@ function scrollToBottom(smooth: boolean = true): void {
 
   window.scrollTo({ top: scrollingElement.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
 }
+
+dayjs.extend(localizedFormat);
+dayjs.extend(utc);
+dayjs.locale('ru');
 
 document.addEventListener('DOMContentLoaded', () => {
   const thread: Thread | null =

@@ -1,11 +1,12 @@
 @import './reset';
 @import './layout';
 @import './sidebar';
-@import './index-page';
-@import './board-page';
-@import './thread-page';
+@import './pages/index';
+@import './pages/board';
+@import './pages/thread';
 @import './thread';
 @import './post';
 @import './post-files';
 @import './post-file';
 @import './markup';
+@import './post-form';

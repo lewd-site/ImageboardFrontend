@@ -1,4 +1,5 @@
 import { html } from 'lit-html';
+import dayjs from 'dayjs';
 import Post from '../models/post';
 import markup from './markup';
 import postFiles from './post-files';
@@ -8,19 +9,27 @@ interface PostProps {
   readonly post: Post;
 }
 
+const DEFAULT_NAME = 'Anonymous';
+
 export function post({ className, post }: PostProps) {
-  className = [className, 'post'].filter((c) => typeof c !== 'undefined').join(' ');
+  className = [
+    className,
+    'post',
+    post.files.length > 0 ? (post.files.length > 1 ? 'post_multiple-files' : 'post_single-file') : 'post_without-files',
+  ]
+    .filter((c) => typeof c !== 'undefined')
+    .join(' ');
+
+  const date = dayjs.utc(post.createdAt).format('L LTS');
 
   return html`<section class=${className} id=${`post_${post.id}`}>
     <div class="post__header">
       <span class="post__author">
-        <span class="post__name">${post.name || ''}</span>
+        <span class="post__name">${post.name || DEFAULT_NAME}</span>
         <span class="post__tripcode">${post.tripcode || ''}</span>
       </span>
 
-      <time class="post__date" datetime=${post.createdAt.toISOString()}>
-        ${post.createdAt.toLocaleDateString()} ${post.createdAt.toLocaleTimeString()}
-      </time>
+      <time class="post__date" datetime=${post.createdAt.toISOString()}>${date}</time>
 
       <span class="post__id">${post.id}</span>
     </div>

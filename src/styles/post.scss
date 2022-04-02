@@ -7,6 +7,10 @@
   }
 
   &__author {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: baseline;
+
     font-size: 18px;
     margin-right: 16px;
   }
@@ -34,7 +38,25 @@
     }
   }
 
+  &_single-file &__files {
+    float: left;
+  }
+
+  &_single-file &__message {
+    padding-top: 38px;
+  }
+
+  &_multiple-files &__files {
+    margin-right: -16px;
+  }
+
   &__content {
     padding: 0 16px 8px;
+
+    &::after {
+      content: '';
+      display: table;
+      clear: both;
+    }
   }
 }

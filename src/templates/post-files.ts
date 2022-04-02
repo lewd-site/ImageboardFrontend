@@ -62,6 +62,10 @@ function formatDuration(seconds: number): string {
 }
 
 export function postFiles({ className, post, files }: PostFilesProps) {
+  if (!files.length) {
+    return undefined;
+  }
+
   className = [className, 'post-files'].filter((c) => typeof c !== 'undefined').join(' ');
 
   return html`<ul class=${className}>
@@ -80,10 +84,10 @@ export function postFiles({ className, post, files }: PostFilesProps) {
       const thumbnailWidth = Math.round(width / Math.max(1, width / THUMBNAIL_SIZE, height / THUMBNAIL_SIZE));
       const thumbnailHeight = Math.round(height / Math.max(1, width / THUMBNAIL_SIZE, height / THUMBNAIL_SIZE));
 
-      return html`<li class="${`post-files__item post-file post-file_${fileType}`}">
+      return html`<li class=${`post-files__item post-file post-file_${fileType}`}>
         <div class="post-file__info">
           <div class="post-file__name">
-            <a class="post-file__info-link" href="${originalUrl}" target="_blank">${formatFileName(file.name)}</a>
+            <a class="post-file__info-link" href=${originalUrl} target="_blank">${formatFileName(file.name)}</a>
           </div>
 
           <div class="post-file__dimensions">${formatFileDimensions(file)}</div>
@@ -91,7 +95,7 @@ export function postFiles({ className, post, files }: PostFilesProps) {
 
         <a
           class="post-file__link"
-          href="${originalUrl}"
+          href=${originalUrl}
           target="_blank"
           data-gallery=${JSON.stringify({
             id: `${post.id}-${index}`,
@@ -99,16 +103,16 @@ export function postFiles({ className, post, files }: PostFilesProps) {
           })}
         >
           <picture class="post-file__picture">
-            <source srcset="${thumbnailUrl}" type="image/webp" />
-            <source srcset="${thumbnailFallbackUrl}" type="${fallbackMimeType}" />
+            <source srcset=${thumbnailUrl} type="image/webp" />
+            <source srcset=${thumbnailFallbackUrl} type=${fallbackMimeType} />
 
             <img
               class="post-file__image"
-              src="${thumbnailFallbackUrl}"
+              src=${thumbnailFallbackUrl}
               alt=""
-              title="${file.name}"
-              width="${thumbnailWidth}"
-              height="${thumbnailHeight}"
+              title=${file.name}
+              width=${thumbnailWidth}
+              height=${thumbnailHeight}
             />
           </picture>
         </a>

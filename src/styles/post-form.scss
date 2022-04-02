@@ -1,0 +1,58 @@
+.post-form {
+  &__inner {
+    display: flex;
+    flex-flow: column nowrap;
+
+    margin: 0 auto;
+
+    min-width: 400px;
+    max-width: 600px;
+  }
+
+  &__row {
+    display: flex;
+    flex-flow: row nowrap;
+
+    width: 100%;
+
+    &:not(:last-child) {
+      margin-bottom: 8px;
+    }
+  }
+
+  &__subject,
+  &__name,
+  &__message {
+    background: #3e4249;
+    border: 0;
+    border-radius: 5px;
+    color: #eee;
+
+    flex: 1;
+
+    width: 100%;
+
+    padding: 4px;
+  }
+
+  &__submit {
+    background: #43474f;
+    border: 0;
+    border-radius: 5px;
+    color: #9da2b2;
+
+    margin-left: 8px;
+
+    cursor: pointer;
+
+    transition: background 100ms ease;
+
+    &:hover {
+      background: #292b30;
+    }
+  }
+
+  &__message {
+    resize: none;
+  }
+}
