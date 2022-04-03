@@ -32,6 +32,8 @@
 
     text-decoration: none;
 
+    max-width: 100%;
+
     padding: 8px 16px;
 
     transition: background 100ms ease;
@@ -57,5 +59,10 @@
         background: #e3833d;
       }
     }
+  }
+
+  &__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

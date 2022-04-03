@@ -1,0 +1,33 @@
+.table {
+  border: 0;
+
+  &__header,
+  &__body,
+  &__row {
+    border: 0;
+  }
+
+  &__row {
+    background: #36393f;
+  }
+
+  &__body &__row {
+    &:nth-child(2n + 1) {
+      background: #3e4249;
+    }
+  }
+
+  &__cell {
+    border: 0;
+
+    padding: 4px 8px;
+
+    &_left {
+      text-align: left;
+    }
+
+    &_right {
+      text-align: right;
+    }
+  }
+}

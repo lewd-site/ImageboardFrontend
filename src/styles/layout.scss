@@ -1,5 +1,7 @@
 @import './mixins';
 
+$sidebar-width: 200px;
+
 .layout {
   background: #36393f;
   color: #eeeeee;
@@ -43,11 +45,11 @@
     }
 
     @media screen and (min-width: 600px) {
-      width: 200px;
+      width: $sidebar-width;
     }
 
     @media screen and (min-width: 1200px) {
-      left: calc(50vw - 400px - 200px);
+      left: calc(50vw - 400px - $sidebar-width);
     }
 
     @media screen and (max-width: 1199px) {
