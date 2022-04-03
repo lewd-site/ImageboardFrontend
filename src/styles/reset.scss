@@ -4,7 +4,7 @@
 
 html,
 body {
-  font-family: sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 16px;
   line-height: 1.5;
 }
@@ -67,4 +67,12 @@ textarea {
   &:focus {
     outline: none;
   }
+}
+
+pre,
+code,
+kbd,
+var,
+samp {
+  font-family: 'Fira Code', monospace;
 }

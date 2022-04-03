@@ -15,6 +15,10 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.woff2?$/,
+        type: 'asset/resource',
+      },
     ],
   },
   output: {
