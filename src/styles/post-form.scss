@@ -5,8 +5,11 @@
 
     margin: 0 auto;
 
-    min-width: 400px;
     max-width: 600px;
+
+    @media screen and (min-width: 600px) {
+      min-width: 400px;
+    }
   }
 
   &__row {

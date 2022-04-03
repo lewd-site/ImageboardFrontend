@@ -1,9 +1,13 @@
 .post {
   &__header {
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: column nowrap;
     align-items: baseline;
     padding: 8px 16px;
+
+    @media screen and (min-width: 600px) {
+      flex-flow: row wrap;
+    }
   }
 
   &__author {
@@ -12,6 +16,8 @@
     align-items: baseline;
 
     font-size: 18px;
+    word-break: break-word;
+
     margin-right: 16px;
   }
 
@@ -38,12 +44,14 @@
     }
   }
 
-  &_single-file &__files {
-    float: left;
-  }
+  @media screen and (min-width: 600px) {
+    &_single-file &__files {
+      float: left;
+    }
 
-  &_single-file &__message {
-    padding-top: 38px;
+    &_single-file &__message {
+      padding-top: 38px;
+    }
   }
 
   &_multiple-files &__files {
@@ -58,5 +66,9 @@
       display: table;
       clear: both;
     }
+  }
+
+  &__message {
+    word-break: break-word;
   }
 }

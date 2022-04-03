@@ -16,9 +16,13 @@
     background: #43474f;
     border-radius: 5px;
 
-    width: max-content;
-    min-width: 400px;
+    width: 100%;
     max-width: 100%;
+
+    @media screen and (min-width: 600px) {
+      width: max-content;
+      min-width: 400px;
+    }
 
     &:not(:last-child) {
       margin-bottom: 16px;

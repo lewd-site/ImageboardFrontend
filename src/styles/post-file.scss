@@ -7,6 +7,12 @@
     display: block;
   }
 
+  &__picture,
+  &__image {
+    max-width: 100%;
+    height: auto;
+  }
+
   &__image {
     border-radius: 5px;
     overflow: hidden;
