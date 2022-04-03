@@ -14,6 +14,7 @@ import '@lewd-site/components';
 import '../node_modules/normalize.css/normalize.css';
 import './styles/index.scss';
 import ApiClient from './api/client';
+import initSidebar from './sidebar';
 
 declare global {
   interface Window {
@@ -141,6 +142,8 @@ document.addEventListener(
         initSSE();
       }
     }, SSE_RECONNECT_INTERVAL);
+
+    initSidebar();
 
     const formElement = document.getElementById('post-form');
     if (formElement !== null) {

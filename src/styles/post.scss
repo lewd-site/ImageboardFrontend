@@ -44,6 +44,16 @@
     }
   }
 
+  &__content {
+    padding: 0 16px 8px;
+
+    &::after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+  }
+
   @media screen and (min-width: 600px) {
     &_single-file &__files {
       float: left;
@@ -56,16 +66,6 @@
 
   &_multiple-files &__files {
     margin-right: -16px;
-  }
-
-  &__content {
-    padding: 0 16px 8px;
-
-    &::after {
-      content: '';
-      display: table;
-      clear: both;
-    }
   }
 
   &__message {
