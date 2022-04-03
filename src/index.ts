@@ -3,18 +3,19 @@ import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import utc from 'dayjs/plugin/utc';
 import 'dayjs/locale/ru';
+import ApiClient from './api/client';
 import config from './config';
 import Post, { PostDto } from './models/post';
 import Board, { BoardDto } from './models/board';
 import Thread, { ThreadDto } from './models/thread';
 import { post as postTemplate } from './templates/post';
 import { convertBoardDtoToModel, convertPostDtoToModel, convertThreadDtoToModel } from './types';
-import { delay } from './utils';
+import { delay, isAtBottom, scrollToBottom } from './utils';
+import initSidebar from './sidebar';
+import initPostForm from './post-form';
 import '@lewd-site/components';
 import '../node_modules/normalize.css/normalize.css';
 import './styles/index.scss';
-import ApiClient from './api/client';
-import initSidebar from './sidebar';
 
 declare global {
   interface Window {
@@ -31,20 +32,6 @@ declare global {
 }
 
 const SSE_RECONNECT_INTERVAL = 5000;
-
-const SCROLL_MARGIN = 50;
-
-function isAtBottom(): boolean {
-  const scrollingElement = document.scrollingElement!;
-
-  return scrollingElement.scrollTop + window.innerHeight >= scrollingElement.scrollHeight - SCROLL_MARGIN;
-}
-
-function scrollToBottom(smooth: boolean = true): void {
-  const scrollingElement = document.scrollingElement!;
-
-  window.scrollTo({ top: scrollingElement.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
-}
 
 dayjs.extend(localizedFormat);
 dayjs.extend(utc);
@@ -145,73 +132,8 @@ document.addEventListener(
 
     initSidebar();
 
-    const formElement = document.getElementById('post-form');
-    if (formElement !== null) {
-      if (thread !== null) {
-        formElement.addEventListener('submit', async (e) => {
-          e.preventDefault();
-
-          const nameElement = formElement.querySelector<HTMLInputElement>('[name="name"]')!;
-          const messageElement = formElement.querySelector<HTMLTextAreaElement>('[name="message"]')!;
-          const filesElement = formElement.querySelector<HTMLInputElement>('[name="files"]')!;
-
-          const name = nameElement.value;
-          const message = messageElement.value;
-
-          const files: File[] = [];
-          const fileList = filesElement.files;
-          if (fileList !== null) {
-            for (let i = 0; i < fileList.length; i++) {
-              const item = fileList.item(i);
-              if (item !== null) {
-                files.push(item);
-              }
-            }
-          }
-
-          await apiClient.addPost(board!.slug, thread!.id, name, message, files);
-
-          messageElement.value = '';
-
-          filesElement.type = 'text';
-          filesElement.value = '';
-          filesElement.type = 'file';
-        });
-      } else {
-        formElement.addEventListener('submit', async (e) => {
-          e.preventDefault();
-
-          const subjectElement = formElement.querySelector<HTMLInputElement>('[name="subject"]')!;
-          const nameElement = formElement.querySelector<HTMLInputElement>('[name="name"]')!;
-          const messageElement = formElement.querySelector<HTMLTextAreaElement>('[name="message"]')!;
-          const filesElement = formElement.querySelector<HTMLInputElement>('[name="files"]')!;
-
-          const subject = subjectElement.value;
-          const name = nameElement.value;
-          const message = messageElement.value;
-
-          const files: File[] = [];
-          const fileList = filesElement.files;
-          if (fileList !== null) {
-            for (let i = 0; i < fileList.length; i++) {
-              const item = fileList.item(i);
-              if (item !== null) {
-                files.push(item);
-              }
-            }
-          }
-
-          const thread = await apiClient.addThread(board!.slug, subject, name, message, files);
-
-          messageElement.value = '';
-
-          filesElement.type = 'text';
-          filesElement.value = '';
-          filesElement.type = 'file';
-
-          window.location.href = `/${board?.slug}/res/${thread.id}`;
-        });
-      }
+    if (board) {
+      initPostForm(apiClient, board, thread);
     }
   },
   { passive: true }
