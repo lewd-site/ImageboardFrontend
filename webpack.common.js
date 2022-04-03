@@ -18,6 +18,9 @@ module.exports = {
       {
         test: /\.woff2?$/,
         type: 'asset/resource',
+        generator: {
+          filename: 'fonts/[name][ext][query]',
+        },
       },
       {
         test: /\.svg/,
