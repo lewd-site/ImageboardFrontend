@@ -1,3 +1,7 @@
 module.exports = {
-  plugins: [require('autoprefixer')],
+  plugins: [
+    require('postcss-sort-media-queries')({ sort: 'mobile-first' }),
+    require('autoprefixer'),
+    require('cssnano')({ preset: ['default', { discardComments: { removeAll: true } }] }),
+  ],
 };
