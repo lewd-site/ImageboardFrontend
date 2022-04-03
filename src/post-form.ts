@@ -1,7 +1,6 @@
 import ApiClient from './api/client';
 import { ApiError } from './errors';
-import Board from './models/board';
-import Thread from './models/thread';
+import { Store } from './store';
 
 const FORM_ID = 'post-form';
 
@@ -74,9 +73,15 @@ function getFiles(element: HTMLInputElement | null): File[] {
   return files;
 }
 
-export function initPostForm(apiClient: ApiClient, board: Board, thread: Thread | null) {
+export function initPostForm(store: Store, apiClient: ApiClient) {
   const formElement = document.getElementById(FORM_ID);
   if (formElement === null) {
+    return;
+  }
+
+  const { state } = store;
+  const { board, thread } = state;
+  if (board === null) {
     return;
   }
 
