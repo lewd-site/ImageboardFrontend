@@ -1,0 +1,33 @@
+$icons: 'add', 'anime', 'attach', 'check', 'cinema', 'close', 'desktop', 'directory', 'discussion', 'dots', 'down',
+  'dots-vertical', 'download', 'general', 'hash', 'image', 'left', 'link', 'logo', 'logo-big', 'menu', 'message',
+  'mobile', 'notification', 'profile', 'password', 'pin', 'reply-message', 'reply', 'right', 'settings', 'spinner',
+  'submit', 'unpin', 'up', 'user', 'zoom-in', 'zoom-out';
+
+.icon {
+  display: inline-block;
+
+  background: #9da2b2;
+
+  width: 1em;
+  height: 1em;
+
+  transition: background-color 100ms ease;
+
+  @each $icon in $icons {
+    &_#{$icon} {
+      background: url('../icons/#{$icon}.svg');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }
+  }
+
+  @each $icon in $icons {
+    &_#{$icon}-mask {
+      mask-image: url('../icons/#{$icon}.svg');
+      mask-position: center;
+      mask-repeat: no-repeat;
+      mask-size: 100% 100%;
+    }
+  }
+}

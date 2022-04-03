@@ -60,19 +60,29 @@ td {
   text-align: center;
 }
 
-input,
-select,
-textarea {
-  &,
-  &:focus {
-    outline: none;
-  }
-}
-
 pre,
 code,
 kbd,
 var,
 samp {
   font-family: 'Fira Code', monospace;
+}
+
+[id] {
+  scroll-margin-top: 2ex;
+}
+
+:focus {
+  outline: none;
+}
+
+::-moz-focus-inner {
+  border: 0;
+}
+
+:-webkit-autofill,
+:-webkit-autofill:hover,
+:-webkit-autofill:focus,
+:-webkit-autofill:active {
+  transition-delay: 99999s;
 }
