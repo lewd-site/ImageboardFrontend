@@ -115,13 +115,21 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
     passive: true,
   });
 
+  let submitting = false;
+
   formElement.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (submitting) {
+      return;
+    }
 
     const subject = getValue(subjectElement);
     const name = getValue(nameElement);
     const message = getValue(messageElement);
     const files = getFiles(filesElement);
+
+    submitting = true;
 
     try {
       if (thread !== null) {
@@ -140,6 +148,8 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
       } else {
         throw e;
       }
+    } finally {
+      submitting = false;
     }
   });
 
