@@ -1,6 +1,6 @@
 import ApiClient from './api/client';
-import { ApiError } from './errors';
-import { Store } from './store';
+import { ApiError, ValidationError } from './errors';
+import { createNotification, deleteNotification, Store } from './store';
 
 const FORM_ID = 'post-form';
 
@@ -73,6 +73,30 @@ function getFiles(element: HTMLInputElement | null): File[] {
   return files;
 }
 
+const fields: { [key: string]: string } = {
+  subject: 'тема',
+  name: 'имя',
+  message: 'сообщение',
+  files: 'файл',
+};
+
+const messages: { [key: string]: string } = {
+  required: 'Поле "{field}" обязательно для заполнения',
+  'max-length': 'Поле "{field}" слишком длинное',
+  pattern: 'Поле "{field}" имеет недопустимый формат',
+  'max-size': 'Файл имеет слишком большой размер',
+  'max-width': 'Файл имеет слишком большое разрешение',
+  'max-height': 'Файл имеет слишком большое разрешение',
+  mimetype: 'Неподдерживаемый тип файла',
+};
+
+function formatErrorMessage(error: ValidationError): string {
+  const field = typeof error.field !== 'undefined' ? fields[error.field] || error.field : '';
+  const message = messages[error.message] || error.message;
+
+  return message.replace(/\{field\}/gi, field);
+}
+
 export function initPostForm(store: Store, apiClient: ApiClient) {
   const formElement = document.getElementById(FORM_ID);
   if (formElement === null) {
@@ -131,6 +155,8 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
 
     submitting = true;
 
+    const notification = createNotification(store, 'Отправка поста…', null);
+
     try {
       if (thread !== null) {
         await apiClient.addPost(board.slug, thread.id, name, message, files);
@@ -142,13 +168,16 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
         window.location.href = `/${board.slug}/res/${thread.id}`;
       }
     } catch (e) {
-      if (e instanceof ApiError) {
-        // TODO: show error notification
+      if (e instanceof ValidationError) {
+        createNotification(store, 'Ошибка: ' + formatErrorMessage(e));
+      } else if (e instanceof ApiError) {
         console.log(JSON.stringify(e));
       } else {
         throw e;
       }
     } finally {
+      deleteNotification(store, notification.id);
+
       submitting = false;
     }
   });

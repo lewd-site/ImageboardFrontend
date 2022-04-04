@@ -59,6 +59,25 @@ $sidebar-width: 200px;
     @extend %scrollbar;
   }
 
+  &__notifications {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: flex-end;
+
+    width: fit-content;
+    max-width: calc(100vw - 2 * 16px);
+
+    @media screen and (min-width: 600px) {
+      max-width: 400px;
+    }
+
+    z-index: 75;
+  }
+
   &__title {
     font-size: 24px;
     text-align: center;
@@ -74,7 +93,7 @@ $sidebar-width: 200px;
     min-height: 100vh;
 
     margin: 0 auto;
-    padding: 16px;
+    padding: 40px 16px 16px;
   }
 
   &__index-page,

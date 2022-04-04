@@ -1,4 +1,5 @@
 import Board, { BoardDto } from './models/board';
+import Notification from './models/notification';
 import Post, { PostDto } from './models/post';
 import Thread, { ThreadDto } from './models/thread';
 import { convertBoardDtoToModel, convertPostDtoToModel, convertThreadDtoToModel } from './types';
@@ -23,6 +24,7 @@ export interface State {
   readonly threads: Thread[];
   readonly thread: Thread | null;
   readonly posts: Post[];
+  readonly notifications: Notification[];
 }
 
 export type Listener = (state: State, prevState: State) => void;
@@ -38,7 +40,33 @@ interface AddPostAction {
   readonly post: Post;
 }
 
-export type Action = ReplacePostsAction | AddPostAction;
+interface AddNotificationAction {
+  readonly type: 'add_notification';
+  readonly notification: Notification;
+}
+
+interface RemoveNotificationAction {
+  readonly type: 'remove_notification';
+  readonly id: number;
+}
+
+interface ShowNotificationAction {
+  readonly type: 'show_notification';
+  readonly id: number;
+}
+
+interface HideNotificationAction {
+  readonly type: 'hide_notification';
+  readonly id: number;
+}
+
+export type Action =
+  | ReplacePostsAction
+  | AddPostAction
+  | AddNotificationAction
+  | RemoveNotificationAction
+  | ShowNotificationAction
+  | HideNotificationAction;
 
 function reduce(state: State, action: Action): State {
   switch (action.type) {
@@ -47,6 +75,24 @@ function reduce(state: State, action: Action): State {
 
     case 'add_post':
       return { ...state, posts: [...state.posts, action.post] };
+
+    case 'add_notification':
+      return { ...state, notifications: [...state.notifications, action.notification] };
+
+    case 'remove_notification':
+      return { ...state, notifications: state.notifications.filter((n) => n.id !== action.id) };
+
+    case 'show_notification':
+      return {
+        ...state,
+        notifications: state.notifications.map((n) => (n.id !== action.id ? n : { ...n, fade: false })),
+      };
+
+    case 'hide_notification':
+      return {
+        ...state,
+        notifications: state.notifications.map((n) => (n.id !== action.id ? n : { ...n, fade: true })),
+      };
 
     default:
       return state;
@@ -82,6 +128,30 @@ export class Store {
   };
 }
 
+const MIN_DELAY = 50;
+const FADE_DELAY = 200;
+
+export function deleteNotification(store: Store, id: number): void {
+  store.dispatch({ type: 'hide_notification', id });
+  setTimeout(() => store.dispatch({ type: 'remove_notification', id }), FADE_DELAY);
+}
+
+export function createNotification(
+  store: Store,
+  message: string,
+  timeToLive: number | null = Notification.DEFAULT_TTL
+): Notification {
+  const notification = new Notification(message, timeToLive);
+  store.dispatch({ type: 'add_notification', notification });
+  setTimeout(() => store.dispatch({ type: 'show_notification', id: notification.id }), MIN_DELAY);
+
+  if (timeToLive !== null) {
+    setTimeout(() => deleteNotification(store, notification.id), timeToLive);
+  }
+
+  return notification;
+}
+
 function getInitialState(): State {
   return {
     boards: typeof window.ssr?.boards !== 'undefined' ? window.ssr.boards.map(convertBoardDtoToModel) : [],
@@ -89,6 +159,7 @@ function getInitialState(): State {
     threads: typeof window.ssr?.threads !== 'undefined' ? window.ssr.threads.map(convertThreadDtoToModel) : [],
     thread: typeof window.ssr?.thread !== 'undefined' ? convertThreadDtoToModel(window.ssr.thread) : null,
     posts: typeof window.ssr?.posts !== 'undefined' ? window.ssr.posts.map(convertPostDtoToModel) : [],
+    notifications: [],
   };
 }
 

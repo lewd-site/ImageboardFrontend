@@ -55,3 +55,5 @@ export function post({ className, post }: PostProps) {
     <div class="post__footer"></div>
   </section>`;
 }
+
+export default post;

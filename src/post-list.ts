@@ -3,7 +3,7 @@ import ApiClient from './api/client';
 import config from './config';
 import { PostDto } from './models/post';
 import { Store } from './store';
-import { post as postTemplate } from './templates/post';
+import postTemplate from './templates/post';
 import { convertPostDtoToModel } from './types';
 import { delay, isAtBottom, scrollToBottom } from './utils';
 

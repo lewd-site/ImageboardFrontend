@@ -4,6 +4,7 @@ import utc from 'dayjs/plugin/utc';
 import 'dayjs/locale/ru';
 import ApiClient from './api/client';
 import initGallery from './gallery';
+import initNotifications from './notifications';
 import initPostList from './post-list';
 import initPostForm from './post-form';
 import initSidebar from './sidebar';
@@ -26,6 +27,7 @@ document.addEventListener(
     initPostList(store, apiClient);
     initPostForm(store, apiClient);
     initGallery(store);
+    initNotifications(store);
   },
   { passive: true }
 );
