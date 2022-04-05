@@ -3,6 +3,8 @@ import Post from './models/post';
 import { Store } from './store';
 
 const GALLERY_ID = 'gallery';
+const AUDIO_PLAYER_WIDTH = 800;
+const AUDIO_PLAYER_HEIGHT = 44;
 
 function addPostFiles(galleryElement: HTMLElement, post: Post) {
   post.files.forEach((file, index) =>
@@ -11,8 +13,8 @@ function addPostFiles(galleryElement: HTMLElement, post: Post) {
       original: {
         url: `${config.content.host}/original/${file.hash}.${file.extension}`,
         type: file.type,
-        width: file.width,
-        height: file.height,
+        width: file.width || AUDIO_PLAYER_WIDTH,
+        height: file.height || AUDIO_PLAYER_HEIGHT,
       },
     })
   );
