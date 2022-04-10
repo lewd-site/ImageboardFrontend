@@ -38,6 +38,11 @@
     padding: 4px;
   }
 
+  &__message {
+    min-height: 60px;
+    max-height: 50vh;
+  }
+
   &__submit {
     background: #43474f;
     border: 0;

@@ -2,7 +2,7 @@ import ApiClient from './api/client';
 import { ApiError, ValidationError } from './errors';
 import eventBus from './event-bus';
 import { createNotification, deleteNotification, Store } from './store';
-import { delay } from './utils';
+import { delay, isAtBottom } from './utils';
 
 const FORM_ID = 'post-form';
 
@@ -122,7 +122,6 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
     restoreField(subjectElement, LOCAL_STORAGE_SUBJECT_KEY);
     restoreField(nameElement, LOCAL_STORAGE_NAME_KEY);
     restoreField(messageElement, LOCAL_STORAGE_MESSAGE_KEY);
-    restoreField(filesElement, LOCAL_STORAGE_MESSAGE_KEY);
   }
 
   function resetForm() {
@@ -132,6 +131,23 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
 
     localStorage.removeItem(LOCAL_STORAGE_SUBJECT_KEY);
     localStorage.removeItem(LOCAL_STORAGE_MESSAGE_KEY);
+  }
+
+  function updateMessageElementHeight() {
+    if (messageElement === null) {
+      return;
+    }
+
+    const scrollingElement = document.scrollingElement || document.body;
+    const { scrollHeight } = scrollingElement;
+    const scroll = isAtBottom();
+
+    messageElement.style.height = '0';
+    messageElement.style.height = `${messageElement.scrollHeight}px`;
+
+    if (scroll && scrollingElement.scrollHeight !== scrollHeight) {
+      scrollingElement.scrollTop = scrollingElement.scrollHeight;
+    }
   }
 
   async function insertReply(postId: number) {
@@ -173,6 +189,7 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
     await delay();
     messageElement.setSelectionRange(cursor, cursor);
     saveField(messageElement, LOCAL_STORAGE_MESSAGE_KEY);
+    updateMessageElementHeight();
   }
 
   let submitting = false;
@@ -195,9 +212,11 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
       if (thread !== null) {
         await apiClient.addPost(board.slug, thread.id, name, message, files);
         resetForm();
+        updateMessageElementHeight();
       } else {
         const thread = await apiClient.addThread(board.slug, subject, name, message, files);
         resetForm();
+        updateMessageElementHeight();
 
         window.location.href = `/${board.slug}/res/${thread.id}`;
       }
@@ -221,9 +240,15 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
   });
 
   nameElement?.addEventListener('input', () => saveField(nameElement, LOCAL_STORAGE_NAME_KEY), { passive: true });
-  messageElement?.addEventListener('input', () => saveField(messageElement, LOCAL_STORAGE_MESSAGE_KEY), {
-    passive: true,
-  });
+
+  messageElement?.addEventListener(
+    'input',
+    () => {
+      saveField(messageElement, LOCAL_STORAGE_MESSAGE_KEY);
+      updateMessageElementHeight();
+    },
+    { passive: true }
+  );
 
   formElement.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === 'Enter') {
@@ -239,6 +264,7 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
   });
 
   restoreFields();
+  updateMessageElementHeight();
 
   submitElement?.setAttribute('title', 'Ctrl+Enter');
 
