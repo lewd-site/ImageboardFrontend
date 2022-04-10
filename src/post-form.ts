@@ -8,6 +8,7 @@ const SUBJECT_SELECTOR = '[name="subject"]';
 const NAME_SELECTOR = '[name="name"]';
 const MESSAGE_SELECTOR = '[name="message"]';
 const FILES_SELECTOR = '[name="files"]';
+const SUBMIT_SELECTOR = '[type="submit"]';
 
 const LOCAL_STORAGE_SUBJECT_KEY = 'post-form.subject';
 const LOCAL_STORAGE_NAME_KEY = 'post-form.name';
@@ -113,6 +114,7 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
   const nameElement = formElement.querySelector<HTMLInputElement>(NAME_SELECTOR);
   const messageElement = formElement.querySelector<HTMLTextAreaElement>(MESSAGE_SELECTOR);
   const filesElement = formElement.querySelector<HTMLInputElement>(FILES_SELECTOR);
+  const submitElement = formElement.querySelector<HTMLButtonElement>(SUBMIT_SELECTOR);
 
   function restoreFields() {
     restoreField(subjectElement, LOCAL_STORAGE_SUBJECT_KEY);
@@ -130,30 +132,19 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
     localStorage.removeItem(LOCAL_STORAGE_MESSAGE_KEY);
   }
 
-  subjectElement?.addEventListener('input', () => saveField(subjectElement, LOCAL_STORAGE_SUBJECT_KEY), {
-    passive: true,
-  });
-
-  nameElement?.addEventListener('input', () => saveField(nameElement, LOCAL_STORAGE_NAME_KEY), { passive: true });
-  messageElement?.addEventListener('input', () => saveField(messageElement, LOCAL_STORAGE_MESSAGE_KEY), {
-    passive: true,
-  });
-
   let submitting = false;
 
-  formElement.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    if (submitting) {
+  async function submitForm() {
+    if (submitting || board === null) {
       return;
     }
+
+    submitting = true;
 
     const subject = getValue(subjectElement);
     const name = getValue(nameElement);
     const message = getValue(messageElement);
     const files = getFiles(filesElement);
-
-    submitting = true;
 
     const notification = createNotification(store, 'Отправка поста…', null);
 
@@ -180,9 +171,33 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
 
       submitting = false;
     }
+  }
+
+  subjectElement?.addEventListener('input', () => saveField(subjectElement, LOCAL_STORAGE_SUBJECT_KEY), {
+    passive: true,
+  });
+
+  nameElement?.addEventListener('input', () => saveField(nameElement, LOCAL_STORAGE_NAME_KEY), { passive: true });
+  messageElement?.addEventListener('input', () => saveField(messageElement, LOCAL_STORAGE_MESSAGE_KEY), {
+    passive: true,
+  });
+
+  formElement.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      submitForm();
+    }
+  });
+
+  formElement.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitForm();
   });
 
   restoreFields();
+
+  submitElement?.setAttribute('title', 'Ctrl+Enter');
 }
 
 export default initPostForm;
