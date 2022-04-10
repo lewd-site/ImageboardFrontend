@@ -1,6 +1,8 @@
 import ApiClient from './api/client';
 import { ApiError, ValidationError } from './errors';
+import eventBus from './event-bus';
 import { createNotification, deleteNotification, Store } from './store';
+import { delay } from './utils';
 
 const FORM_ID = 'post-form';
 
@@ -132,6 +134,47 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
     localStorage.removeItem(LOCAL_STORAGE_MESSAGE_KEY);
   }
 
+  async function insertReply(postId: number) {
+    if (messageElement === null) {
+      return;
+    }
+
+    const selection = window.getSelection();
+    const quote = selection ? selection.toString().replace(/\r/g, '').trim() : '';
+
+    const selectionStart = messageElement.selectionStart;
+    const selectionEnd = messageElement.selectionEnd;
+
+    const textBefore = messageElement.value.substring(0, selectionStart);
+    const textAfter = messageElement.value.substring(selectionEnd);
+
+    let cursor = selectionStart;
+    let textToInsert = `>>${postId}` + (quote.length ? `\n${quote}`.replace(/\n/g, '\n> ') : '');
+
+    if (textBefore.length && !textBefore.endsWith('\n')) {
+      textToInsert = `\n${textToInsert}`;
+    }
+
+    if (textAfter.length) {
+      if (textAfter.startsWith('\n')) {
+        textToInsert = `${textToInsert}\n`;
+      } else {
+        textToInsert = `${textToInsert}\n\n`;
+        cursor--;
+      }
+    } else {
+      textToInsert = `${textToInsert}\n`;
+    }
+
+    cursor += textToInsert.length;
+    messageElement.value = `${textBefore}${textToInsert}${textAfter}`;
+    await delay();
+    messageElement.focus();
+    await delay();
+    messageElement.setSelectionRange(cursor, cursor);
+    saveField(messageElement, LOCAL_STORAGE_MESSAGE_KEY);
+  }
+
   let submitting = false;
 
   async function submitForm() {
@@ -198,6 +241,8 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
   restoreFields();
 
   submitElement?.setAttribute('title', 'Ctrl+Enter');
+
+  eventBus.subscribe('reply-click', insertReply);
 }
 
 export default initPostForm;

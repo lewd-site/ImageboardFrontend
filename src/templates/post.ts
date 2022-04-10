@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import Post from '../models/post';
 import markup from './markup';
 import postFiles from './post-files';
+import eventBus from '../event-bus';
 
 interface PostProps {
   readonly className?: string;
@@ -34,6 +35,10 @@ export function post({ className, post }: PostProps) {
 
   const date = dayjs.utc(post.createdAt).format('L LTS');
 
+  function onReplyClick(e: Event) {
+    eventBus.emit('reply-click', post.id);
+  }
+
   return html`<section class=${className} id=${`post_${post.id}`}>
     <div class="post__header">
       <span class="post__author">
@@ -43,7 +48,13 @@ export function post({ className, post }: PostProps) {
 
       <time class="post__date" datetime=${post.createdAt.toISOString()}>${date}</time>
 
-      <span class="post__id">${post.id}</span>
+      <span class="post__actions">
+        <span class="post__id">${post.id}</span>
+
+        <button type="button" class="post__reply" @click=${onReplyClick}>
+          <span class="icon icon_reply-mask"></span>
+        </button>
+      </span>
     </div>
 
     <div class="post__content">
