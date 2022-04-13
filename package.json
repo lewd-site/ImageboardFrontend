@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@lewd-site/components": "git+ssh://git@github.com:lewd-site/Components.git",
+    "@lewd-site/components": "https://github.com/lewd-site/Components.git",
     "dayjs": "^1.11.0",
     "lit-html": "^2.2.1",
     "normalize.css": "^8.0.1"

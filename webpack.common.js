@@ -1,7 +1,6 @@
 const Dotenv = require('dotenv-webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
-const webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.ts',
@@ -35,7 +34,6 @@ module.exports = {
     clean: true,
   },
   plugins: [
-    new webpack.ProgressPlugin(),
     new MiniCssExtractPlugin({
       filename: 'bundle.css',
     }),

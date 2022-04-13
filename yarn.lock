@@ -501,9 +501,9 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@lewd-site/components@git+ssh://git@github.com:lewd-site/Components.git":
+"@lewd-site/components@https://github.com/lewd-site/Components.git":
   version "1.1.1"
-  resolved "git+ssh://git@github.com:lewd-site/Components.git#0877dd3f07e3f43ca66287ba6437d5facd907cba"
+  resolved "https://github.com/lewd-site/Components.git#0877dd3f07e3f43ca66287ba6437d5facd907cba"
   dependencies:
     lit "^2.2.0"
     normalize.css "^8.0.1"
