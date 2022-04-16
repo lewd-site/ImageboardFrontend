@@ -1,15 +1,19 @@
+import { render } from 'lit-html';
 import ApiClient from './api/client';
 import { ApiError, ValidationError } from './errors';
 import eventBus from './event-bus';
 import { createNotification, deleteNotification, Store } from './store';
+import markupButtons from './templates/markup-buttons';
 import { delay, isAtBottom, scrollToBottom } from './utils';
 
 const FORM_ID = 'post-form';
 const PLACEHOLDER_ID = 'post-form-placeholder';
 const CLOSE_ID = 'post-form-close';
+const MARKUP_ID = 'post-form-markup';
 
 const FORM_CLASS = 'post-form';
 const FORM_FIXED_CLASS = `${FORM_CLASS}_fixed`;
+const FORM_ROW_CLASS = `${FORM_CLASS}__row`;
 const FORM_SELECTOR = `.${FORM_CLASS}`;
 
 const SUBJECT_SELECTOR = '[name="subject"]';
@@ -251,6 +255,36 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
     messageElement.setSelectionRange(cursor, cursor);
   }
 
+  async function insertMarkup({ before, after }: { before: string; after: string }) {
+    if (messageElement === null) {
+      return;
+    }
+
+    const selectionStart = messageElement.selectionStart;
+    const selectionEnd = messageElement.selectionEnd;
+
+    const textSelected = messageElement.value.substring(selectionStart, selectionEnd);
+    const textToInsert = `${before}${textSelected}${after}`;
+
+    const textBefore = messageElement.value.substring(0, selectionStart);
+    const textAfter = messageElement.value.substring(selectionEnd);
+
+    messageElement.value = `${textBefore}${textToInsert}${textAfter}`;
+    saveField(messageElement, LOCAL_STORAGE_MESSAGE_KEY);
+
+    updateMessageElementHeight();
+
+    await delay();
+
+    messageElement.focus();
+
+    await delay();
+
+    const start = selectionStart + before.length;
+    const end = selectionEnd + before.length;
+    messageElement.setSelectionRange(start, end);
+  }
+
   let submitting = false;
 
   async function submitForm() {
@@ -317,10 +351,39 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
   );
 
   formElement.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.key === 'Enter') {
+    if (e.ctrlKey && e.code === 'Enter') {
       e.preventDefault();
       e.stopPropagation();
       submitForm();
+    } else if (e.altKey) {
+      switch (e.code) {
+        case 'KeyB':
+          e.preventDefault();
+          e.stopPropagation();
+          insertMarkup({ before: '[b]', after: '[/b]' });
+          break;
+
+        case 'KeyI':
+          e.preventDefault();
+          e.stopPropagation();
+          insertMarkup({ before: '[i]', after: '[/i]' });
+          break;
+
+        case 'KeyT':
+          e.preventDefault();
+          e.stopPropagation();
+          insertMarkup({ before: '[s]', after: '[/s]' });
+          break;
+
+        case 'KeyP':
+          e.preventDefault();
+          e.stopPropagation();
+          insertMarkup({ before: '[spoiler]', after: '[/spoiler]' });
+          break;
+
+        default:
+          console.log(e.key);
+      }
     }
   });
 
@@ -335,11 +398,18 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
   submitElement?.setAttribute('title', 'Ctrl+Enter');
 
   eventBus.subscribe('reply-click', insertReply);
+  eventBus.subscribe('markup-click', insertMarkup);
 
   closeElement?.addEventListener('click', (e) => {
     e.preventDefault();
     makeNormal();
   });
+
+  const markupElement = document.getElementById(MARKUP_ID);
+  if (markupElement) {
+    markupElement.classList.add(FORM_ROW_CLASS);
+    render(markupButtons({}), markupElement);
+  }
 }
 
 export default initPostForm;
