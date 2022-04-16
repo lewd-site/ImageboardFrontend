@@ -24,8 +24,8 @@ document.addEventListener(
     const store = createStore();
 
     initSidebar();
-    initPostList(store, apiClient);
     initPostForm(store, apiClient);
+    initPostList(store, apiClient);
     initGallery(store);
     initNotifications(store);
   },

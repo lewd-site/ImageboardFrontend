@@ -2,9 +2,15 @@ import ApiClient from './api/client';
 import { ApiError, ValidationError } from './errors';
 import eventBus from './event-bus';
 import { createNotification, deleteNotification, Store } from './store';
-import { delay, isAtBottom } from './utils';
+import { delay, isAtBottom, scrollToBottom } from './utils';
 
 const FORM_ID = 'post-form';
+const PLACEHOLDER_ID = 'post-form-placeholder';
+const CLOSE_ID = 'post-form-close';
+
+const FORM_CLASS = 'post-form';
+const FORM_FIXED_CLASS = `${FORM_CLASS}_fixed`;
+const FORM_SELECTOR = `.${FORM_CLASS}`;
 
 const SUBJECT_SELECTOR = '[name="subject"]';
 const NAME_SELECTOR = '[name="name"]';
@@ -112,6 +118,50 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
     return;
   }
 
+  const placeholderElement = document.getElementById(PLACEHOLDER_ID);
+  const closeElement = document.getElementById(CLOSE_ID);
+
+  function updatePlaceholderHeight() {
+    if (formElement === null || placeholderElement === null) {
+      return;
+    }
+
+    const wrapperElement = formElement.closest(FORM_SELECTOR);
+    if (wrapperElement === null) {
+      return;
+    }
+
+    const rect = wrapperElement.getBoundingClientRect();
+    const height = rect.height;
+    placeholderElement.style.height = `${height}px`;
+  }
+
+  function makeFixed() {
+    if (formElement === null) {
+      return;
+    }
+
+    const wrapperElement = formElement.closest(FORM_SELECTOR);
+    if (wrapperElement === null) {
+      return;
+    }
+
+    wrapperElement.classList.add(FORM_FIXED_CLASS);
+  }
+
+  function makeNormal() {
+    if (formElement === null) {
+      return;
+    }
+
+    const wrapperElement = formElement.closest(FORM_SELECTOR);
+    if (wrapperElement === null) {
+      return;
+    }
+
+    wrapperElement.classList.remove(FORM_FIXED_CLASS);
+  }
+
   const subjectElement = formElement.querySelector<HTMLInputElement>(SUBJECT_SELECTOR);
   const nameElement = formElement.querySelector<HTMLInputElement>(NAME_SELECTOR);
   const messageElement = formElement.querySelector<HTMLTextAreaElement>(MESSAGE_SELECTOR);
@@ -133,7 +183,7 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
     localStorage.removeItem(LOCAL_STORAGE_MESSAGE_KEY);
   }
 
-  function updateMessageElementHeight() {
+  async function updateMessageElementHeight() {
     if (messageElement === null) {
       return;
     }
@@ -148,6 +198,9 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
     if (scroll && scrollingElement.scrollHeight !== scrollHeight) {
       scrollingElement.scrollTop = scrollingElement.scrollHeight;
     }
+
+    await delay();
+    updatePlaceholderHeight();
   }
 
   async function insertReply(postId: number) {
@@ -184,12 +237,18 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
 
     cursor += textToInsert.length;
     messageElement.value = `${textBefore}${textToInsert}${textAfter}`;
-    await delay();
-    messageElement.focus();
-    await delay();
-    messageElement.setSelectionRange(cursor, cursor);
     saveField(messageElement, LOCAL_STORAGE_MESSAGE_KEY);
+
     updateMessageElementHeight();
+    makeFixed();
+
+    await delay();
+
+    messageElement.focus();
+
+    await delay();
+
+    messageElement.setSelectionRange(cursor, cursor);
   }
 
   let submitting = false;
@@ -213,6 +272,8 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
         await apiClient.addPost(board.slug, thread.id, name, message, files);
         resetForm();
         updateMessageElementHeight();
+        makeNormal();
+        scrollToBottom();
       } else {
         const thread = await apiClient.addThread(board.slug, subject, name, message, files);
         resetForm();
@@ -233,6 +294,11 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
 
       submitting = false;
     }
+  }
+
+  if (placeholderElement !== null) {
+    document.addEventListener('resize', updatePlaceholderHeight, { passive: true });
+    updatePlaceholderHeight();
   }
 
   subjectElement?.addEventListener('input', () => saveField(subjectElement, LOCAL_STORAGE_SUBJECT_KEY), {
@@ -269,6 +335,11 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
   submitElement?.setAttribute('title', 'Ctrl+Enter');
 
   eventBus.subscribe('reply-click', insertReply);
+
+  closeElement?.addEventListener('click', (e) => {
+    e.preventDefault();
+    makeNormal();
+  });
 }
 
 export default initPostForm;

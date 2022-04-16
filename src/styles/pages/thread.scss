@@ -28,4 +28,29 @@
       margin-bottom: 16px;
     }
   }
+
+  &__post-form {
+    &.post-form_fixed {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+
+      background: #36393f;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      clip-path: inset(-24px 0 0 0);
+
+      width: 100%;
+      padding: 16px;
+
+      z-index: 50;
+    }
+  }
+
+  #post-form-placeholder {
+    display: none;
+  }
+
+  &__post-form.post-form_fixed ~ #post-form-placeholder {
+    display: block;
+  }
 }

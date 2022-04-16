@@ -1,4 +1,45 @@
 .post-form {
+  &__header {
+    position: relative;
+
+    margin: 0 auto;
+
+    max-width: 600px;
+  }
+
+  &__close {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+
+    display: none;
+
+    background: none;
+    border: 0;
+
+    width: 24px;
+    height: 24px;
+
+    cursor: pointer;
+
+    &:hover {
+      .icon {
+        background: $icon-hover;
+      }
+    }
+  }
+
+  &_fixed &__close {
+    display: block;
+  }
+
+  &__title {
+    font-size: 20px;
+    text-align: center;
+
+    margin-bottom: 16px;
+  }
+
   &__inner {
     display: flex;
     flex-flow: column nowrap;
