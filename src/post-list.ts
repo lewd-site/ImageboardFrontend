@@ -23,6 +23,65 @@ async function onSSEOpen(store: Store, apiClient: ApiClient) {
   store.dispatch({ type: 'replace_posts', posts });
 }
 
+const ICON_WIDTH = 64;
+const ICON_HEIGHT = 64;
+
+let icon: HTMLLinkElement | null = null;
+let context: CanvasRenderingContext2D | null = null;
+let image: HTMLImageElement | null = null;
+
+function initFavicon() {
+  const originalIcon = document.head.querySelector('link[rel="icon"]');
+  if (!originalIcon) {
+    return;
+  }
+
+  icon = originalIcon.cloneNode(true) as HTMLLinkElement;
+  icon.href = '';
+
+  document.head.querySelectorAll('link[rel="icon"]').forEach((element) => element.remove());
+  document.head.insertAdjacentElement('beforeend', icon);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = ICON_WIDTH;
+  canvas.height = ICON_HEIGHT;
+  context = canvas.getContext('2d');
+
+  const img = new Image();
+  img.src = '/favicon-32x32.png';
+  img.onload = () => (image = img);
+}
+
+function updateFavicon(unreadPostsCount: number) {
+  if (icon === null || context === null) {
+    return;
+  }
+
+  context.clearRect(0, 0, ICON_WIDTH, ICON_HEIGHT);
+
+  if (image !== null) {
+    context.drawImage(image, 0, 0, ICON_WIDTH, ICON_HEIGHT);
+  }
+
+  if (unreadPostsCount > 0) {
+    context.fillStyle = '#ff1133';
+    context.beginPath();
+    context.arc((ICON_WIDTH * 3) / 4, (ICON_HEIGHT * 1) / 4, ICON_WIDTH / 4, 0, 2 * Math.PI);
+    context.fill();
+  }
+
+  icon.href = context.canvas.toDataURL('image/png');
+}
+
+const originalTitle = document.title;
+
+function updateTitle(unreadPostsCount: number) {
+  document.title = unreadPostsCount ? `[${unreadPostsCount}] ${originalTitle}` : originalTitle;
+}
+
+let unreadPostsCount = 0;
+let visible = !document.hidden;
+
 function onPostCreated(store: Store, event: any) {
   const { state } = store;
   const { thread } = state;
@@ -35,6 +94,10 @@ function onPostCreated(store: Store, event: any) {
   if (post.parentId !== thread.id) {
     return;
   }
+
+  unreadPostsCount = visible ? 0 : unreadPostsCount + 1;
+  updateTitle(unreadPostsCount);
+  updateFavicon(unreadPostsCount);
 
   store.dispatch({ type: 'add_post', post });
 }
@@ -82,6 +145,23 @@ export function initPostList(store: Store, apiClient: ApiClient) {
       initSSE(store, apiClient);
     }
   }, SSE_RECONNECT_INTERVAL);
+
+  document.addEventListener(
+    'visibilitychange',
+    () => {
+      visible = !document.hidden;
+      if (!visible) {
+        return;
+      }
+
+      unreadPostsCount = 0;
+      updateTitle(unreadPostsCount);
+      updateFavicon(unreadPostsCount);
+    },
+    { passive: true }
+  );
+
+  initFavicon();
 }
 
 export default initPostList;
