@@ -25,6 +25,9 @@ export interface State {
   readonly thread: Thread | null;
   readonly posts: Post[];
   readonly notifications: Notification[];
+  readonly settings: {
+    readonly nsfw: boolean;
+  };
 }
 
 export type Listener = (state: State, prevState: State) => void;
@@ -60,13 +63,23 @@ interface HideNotificationAction {
   readonly id: number;
 }
 
+interface EnableNsfw {
+  readonly type: 'enable_nsfw';
+}
+
+interface DisableNsfw {
+  readonly type: 'disable_nsfw';
+}
+
 export type Action =
   | ReplacePostsAction
   | AddPostAction
   | AddNotificationAction
   | RemoveNotificationAction
   | ShowNotificationAction
-  | HideNotificationAction;
+  | HideNotificationAction
+  | EnableNsfw
+  | DisableNsfw;
 
 function reduce(state: State, action: Action): State {
   switch (action.type) {
@@ -93,6 +106,12 @@ function reduce(state: State, action: Action): State {
         ...state,
         notifications: state.notifications.map((n) => (n.id !== action.id ? n : { ...n, fade: true })),
       };
+
+    case 'enable_nsfw':
+      return { ...state, settings: { ...state.settings, nsfw: true } };
+
+    case 'disable_nsfw':
+      return { ...state, settings: { ...state.settings, nsfw: false } };
 
     default:
       return state;
@@ -152,6 +171,8 @@ export function createNotification(
   return notification;
 }
 
+const LOCAL_STORAGE_SETTINGS_NSFW_KEY = 'settings.nsfw';
+
 function getInitialState(): State {
   return {
     boards: typeof window.ssr?.boards !== 'undefined' ? window.ssr.boards.map(convertBoardDtoToModel) : [],
@@ -160,12 +181,17 @@ function getInitialState(): State {
     thread: typeof window.ssr?.thread !== 'undefined' ? convertThreadDtoToModel(window.ssr.thread) : null,
     posts: typeof window.ssr?.posts !== 'undefined' ? window.ssr.posts.map(convertPostDtoToModel) : [],
     notifications: [],
+    settings: {
+      nsfw: localStorage.getItem(LOCAL_STORAGE_SETTINGS_NSFW_KEY) === 'true',
+    },
   };
 }
 
 export function createStore(): Store {
   const initialState = getInitialState();
-  return new Store(initialState);
+  const store = new Store(initialState);
+
+  return store;
 }
 
 export default createStore;

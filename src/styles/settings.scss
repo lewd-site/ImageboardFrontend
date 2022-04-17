@@ -1,0 +1,39 @@
+.settings {
+  &__header {
+    position: relative;
+  }
+
+  &__close {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+
+    background: none;
+    border: 0;
+
+    width: 24px;
+    height: 24px;
+
+    cursor: pointer;
+
+    &:hover {
+      .icon {
+        background: $icon-hover;
+      }
+    }
+  }
+
+  &__title {
+    font-size: 20px;
+
+    margin-bottom: 16px;
+  }
+
+  &__row {
+    display: flex;
+
+    &:not(:last-child) {
+      margin-bottom: 16px;
+    }
+  }
+}

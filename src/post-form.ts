@@ -387,6 +387,10 @@ export function initPostForm(store: Store, apiClient: ApiClient) {
     }
   });
 
+  formElement.addEventListener('keydown', (e) => {
+    e.stopPropagation();
+  });
+
   formElement.addEventListener('submit', async (e) => {
     e.preventDefault();
     submitForm();

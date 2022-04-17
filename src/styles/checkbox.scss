@@ -1,0 +1,45 @@
+.checkbox {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-start;
+
+  cursor: pointer;
+
+  &__input {
+    display: none;
+  }
+
+  &__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #4e525a;
+    border-radius: 4px;
+
+    font-size: 8px;
+
+    width: 16px;
+    height: 16px;
+
+    margin-right: 16px;
+
+    transition: background-color 100ms ease;
+
+    .icon {
+      background: #fff;
+      opacity: 0.01;
+      transition: background-color 100ms ease, opacity 100ms ease;
+    }
+  }
+
+  &__input:checked ~ &__mark,
+  &:hover &__mark {
+    background: #9631cd;
+  }
+
+  &__input:checked ~ &__mark .icon {
+    opacity: 1;
+  }
+}

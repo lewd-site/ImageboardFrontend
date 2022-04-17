@@ -29,7 +29,7 @@ $sidebar-width: 200px;
     background: none;
     box-shadow: none;
 
-    width: 100vw;
+    width: 100%;
     height: 100vh;
 
     max-height: 100vh;
@@ -55,6 +55,34 @@ $sidebar-width: 200px;
     @media screen and (max-width: 1199px) {
       background: #36393f;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  &__settings {
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    background: #36393f;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+
+    width: 100%;
+    height: 100vh;
+
+    max-height: 100vh;
+
+    padding: 16px;
+
+    z-index: 100;
+
+    transition: right 200ms ease, width 200ms ease;
+
+    &_hidden {
+      right: -100vw;
+    }
+
+    @media screen and (min-width: 600px) {
+      width: 400px;
     }
   }
 

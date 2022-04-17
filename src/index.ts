@@ -7,6 +7,7 @@ import initGallery from './gallery';
 import initNotifications from './notifications';
 import initPostList from './post-list';
 import initPostForm from './post-form';
+import initSettings from './settings';
 import initSidebar from './sidebar';
 import createStore from './store';
 import '@lewd-site/components';
@@ -28,6 +29,7 @@ document.addEventListener(
     initPostList(store, apiClient);
     initGallery(store);
     initNotifications(store);
+    initSettings(store);
   },
   { passive: true }
 );
