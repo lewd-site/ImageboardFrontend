@@ -20,6 +20,13 @@ interface LinkNode {
   readonly icon?: string;
 }
 
+interface DiceNode {
+  readonly type: 'dice';
+  readonly count: number;
+  readonly max: number;
+  readonly result?: number[];
+}
+
 interface StyleNode {
   readonly type: 'style';
   readonly style: Style;
@@ -27,7 +34,7 @@ interface StyleNode {
   readonly children: Node[];
 }
 
-export type Node = TextNode | NewLineNode | RefLinkNode | LinkNode | StyleNode;
+export type Node = TextNode | NewLineNode | RefLinkNode | LinkNode | DiceNode | StyleNode;
 
 export type Style =
   | 'bold'

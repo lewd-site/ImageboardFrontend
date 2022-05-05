@@ -16,6 +16,23 @@ function markupNode(node: Node): TemplateResult | string | undefined {
       // TODO: handle reflinks to another threads
       return html`<a class="reflink" href="#post_${node.postID}" rel="ugc">${node.postID}</a>`;
 
+    case 'dice':
+      let textContent = `##${node.count}d${node.max}##`;
+      if (typeof node.result !== 'undefined') {
+        textContent += ` = ${node.result.join(', ')}`;
+
+        if (node.count > 1) {
+          const sum = node.result.reduce((total, current) => total + current, 0);
+          const min = Math.min(...node.result);
+          const max = Math.max(...node.result);
+          const average = +(sum / node.count).toFixed(3);
+
+          textContent += ` (sum: ${sum}, min: ${min}, max: ${max}, avg: ${average})`;
+        }
+      }
+
+      return html`<span class="dice">${textContent}</span>`;
+
     case 'style':
       const content = markup(node.children);
 
